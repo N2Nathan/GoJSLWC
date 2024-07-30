@@ -1,0 +1,160 @@
+<template>
+  <lightning-card title="Floorplanner">
+    {recordId}
+    <div class="script-container"></div>
+    <div>
+      <nav>
+        <ul id="ge-filemenus" data-id="ge-filemenus">
+          <li>
+            <a href="#">View</a>
+            <ul>
+              <li id="ge-viewoption-palettes" data-id="ge-viewoption-palettes">
+                <a href="#" onclick={showPalettesWindow} id="ge-palettes-windows-button" data-id="ge-palettes-windows-button">
+                  Palettes
+                  <p class="ge-shortcut">(Ctrl + P)</p>
+                </a>
+              </li>
+              <!-- <li id="ge-viewoption-overviews" data-id="ge-viewoption-overviews">
+                <a href="#" onclick={showOverviewsWindow} id="ge-overview-windows-button" data-id="ge-overview-windows-button">
+                  Overview
+                  <p class="ge-shortcut">(Ctrl + E)</p>
+                </a>
+              </li>-->
+              <li id="ge-viewoption-inspector" data-id="ge-viewoption-inspector">
+                <a href="#" onclick={showInspectorWindow} id="ge-inspector-windows-button" data-id="ge-inspector-windows-button">
+                  Inspector
+                  <p class="ge-shortcut">(Ctrl + I)</p>
+                </a>
+              </li>
+              <li id="ge-viewoption-options" data-id="ge-viewoption-options">
+                <a href="#" onclick={showOptionsWindow} id="optionsWindow-button" data-id="optionsWindow-button">
+                  Options
+                  <p class="ge-shortcut">(Ctrl + B)</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <div id="toolButtonsDiv" data-id="toolButtonsDiv" style="float: left;">
+          <button class="toolButtons" onclick={enableWallBuilding}>Build Walls</button>
+          <button class="toolButtons" onclick={enableDividerBuilding}>Build Room Dividers</button>
+          <button class="toolButtons" onclick={disableWallBuilding}>Select</button>
+        </div>
+
+        <p id="ge-header" data-id="ge-header">GoFloorPlanner</p>
+        <div id="ge-filename" data-id="ge-filename">(Unsaved file)</div>
+      </nav>
+
+      <input type="file" id="file-input" data-id="file-input" style="display: none;" />
+
+      <div id="ge-diagrams-container" data-id="ge-diagrams-container" style="display: flex;">
+        <div id="ge-diagram-0" data-id="diagram" style="height: 800px; width: 100%; background: #DAE4E4; border: 1px solid black;">
+        </div>
+      </div>
+
+      <div id="ge-palettes-window" data-id="ge-palettes-window" style="visibility: visible" class="ge-draggable ui-draggable">
+        <div id="ge-palettes-window-handle" data-id="ge-palettes-window-handle" class="ge-handle ui-draggable-handle">
+          Palettes
+          <button id="ge-palettes-window-close" data-id="ge-palettes-window-close" class="ge-window-button ge-clickable" onclick={hidePalettesWindow}>X</button>
+        </div>
+        <div id="ge-palettes-container" data-id="ge-palettes-container">
+          <h3>Wall Parts</h3>
+          <div>
+            <div id="ge-palette-1" data-id="palette" style="height: 450px; background: lightgray; border: 1px solid black;">
+            </div>
+          </div>
+          <h3>Furniture</h3>
+          <div>
+            <div id="ge-palette-0" data-id="palette" style="height: 450px; background: lightgray; border: 1px solid black;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+   <!--   <div id="ge-overviews-window" data-id="ge-overviews-window" style="visibility: visible" class="ge-draggable ui-draggable">
+        <div id="ge-overviews-window-handle" data-id="ge-overviews-window-handle" class="ge-handle ui-draggable-handle">
+          Overview
+          <button id="ge-overviews-window-close" data-id="ge-overviews-window-close" class="ge-window-button ge-clickable" onclick={hideOverviewsWindow}>X</button>
+        </div>
+        <div id="ge-overview-0" data-id="ge-overview-0" style="height: 200px; background: white; border: 1px solid black;"></div>
+      </div> -->
+    </div>
+
+    <div id="ge-inspector-window" data-id="ge-inspector-window" style="visibility: hidden" class="ge-draggable ui-draggable">
+      <div id="ge-inspector-window-handle" data-id="ge-inspector-window-handle" class="ge-handle ui-draggable-handle">
+        Properties
+        <button id="ge-inspector-window-close" data-id="ge-inspector-window-close" class="ge-window-button ge-clickable" onclick={hideInspectorWindow}>X</button>
+      </div>
+      <div id="ge-inspector" data-id="ge-inspector" class="inspector"></div>
+    </div>
+
+    <div id="optionsWindow" data-id="optionsWindow" style="visibility: hidden;" class="ge-draggable ui-draggable">
+      <div id="optionsWindow-handle" data-id="optionsWindow-handle" class="ge-handle ui-draggable-handle">
+        Options
+        <button id="optionsWindowClose" data-id="optionsWindowClose" class="windowButtons ge-window-button ge-clickable" onclick={hideOptionsWindow}>X</button>
+      </div>
+      Units
+      <div id="unitsRow" data-id="unitsRow" class="row data">
+        <form id="unitsForm" data-id="unitsForm" onchange={changeUnits}>
+          <div class="col-4">
+            <input type="radio" name="units" id="centimeters" data-id="centimeters" />cm
+          </div>
+          <div class="col-4">
+            <input type="radio" name="units" id="meters" data-id="meters" checked /> m
+          </div>
+          <div class="col-4">
+            <input type="radio" name="units" id="inches" data-id="inches" />in
+          </div>
+          <div class="col-4">
+            <input type="radio" name="units" id="feet" data-id="feet" />ft
+          </div>
+        </form>
+      </div>
+      Grid
+      <div id="gridRow1" data-id="gridRow1" class="row">
+        <div class="col-2">
+          <label for="gridSizeInput" style="float: left;">Grid size</label>
+          <input id="gridSizeInput" data-id="gridSizeInput" placeholder="" class="unitsInput" onchange={changeGridSize} value="20" />
+          <input id="gridSizeUnitsInput" data-id="gridSizeUnitsInput" class="unitsBox" value="cm" disabled />
+        </div>
+        <div class="col-2">
+          <input type="checkbox" id="showGridCheckbox" data-id="showGridCheckbox" onchange={toggleGrid} checked />Show Grid
+        </div>
+      </div>
+      <div id="gridRow2" data-id="gridRow2" class="row">
+        <div class="col-1">
+          <label for="unitsConversionFactorInput" style="float: left;">Units/1px (at scale 100%)</label>
+          <input id="unitsConversionFactorInput" data-id="unitsConversionFactorInput" placeholder="" onchange={changeUnitsConversionFactor} class="unitsInput" value=".02" />
+          <input id="" class="unitsBox" value="cm" disabled />
+        </div>
+      </div>
+      Preferences
+      <div id="miscRow" data-id="miscRow" class="row data">
+        <div class="col-1">
+          <input type="checkbox" id="gridSnapCheckbox" data-id="gridSnapCheckbox" onchange={toggleGridSnap} checked />Grid Snap
+        </div>
+        <div class="col-1">
+          <input type="checkbox" id="wallGuidelinesCheckbox" data-id="wallGuidelinesCheckbox" onchange={toggleWallGuidelines} checked /> Show Wall Guidelines
+        </div>
+        <div class="col-1">
+          <input type="checkbox" id="wallLengthsCheckbox" data-id="wallLengthsCheckbox" onchange={toggleWallLengths} checked /> Show Wall Lengths
+        </div>
+        <div class="col-1">
+          <input type="checkbox" id="wallAnglesCheckbox" data-id="wallAnglesCheckbox" onchange={toggleWallAngles} checked /> Show Wall Angles
+        </div>
+        <div class="col-1">
+          <input type="checkbox" id="onlySmallWallAnglesCheckbox" data-id="onlySmallWallAnglesCheckbox" onchange={toggleOnlySmallWallAngles} checked /> Show Only Non-Reflex Wall Angles
+        </div>
+      </div>
+    </div>
+
+    <div id="json-container" data-id="json-container" style="margin: 20px;">
+      <textarea id="mySavedModel" class="mySavedModel" data-id="mySavedModel" style="width: 100%; height: 200px;"></textarea>
+      <button onclick={save}>Save Model</button>
+      <button onclick={load}>Load Model</button>
+      <button onclick={copyText}>Copy Text</button>
+      <button onclick={paste}>Paste Text</button>
+    </div>
+  </lightning-card>
+</template>

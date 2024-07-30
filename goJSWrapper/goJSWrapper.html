@@ -1,0 +1,6 @@
+<template>
+    <h2>Intermediate LWC</h2>
+    <div lwc:if={gojsLoaded}>
+        <lwc:component record-id={recordId} lwc:is={componentConstructor}></lwc:component>
+    </div>
+</template>

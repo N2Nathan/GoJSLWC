@@ -1,0 +1,8 @@
+.dummy{
+	color : black;
+}
+.ge-draggable {
+    position: absolute;
+    top: 10%!important;
+    left: 4%!important;
+}
